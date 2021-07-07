@@ -15,9 +15,9 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
     end
   end
 
-  def setup_profiled
+  def setup_profiled(*args)
     instrument 'setup_profiled' do
-      super
+      super(*args)
       set_env_default "SECRET_KEY_BASE", app_secret
     end
   end
@@ -34,7 +34,7 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
 
     @app_secret ||= begin
       if @metadata.exists?(key)
-        @metadata.read(key).chomp
+        @metadata.read(key).strip
       else
         secret = SecureRandom.hex(64)
         @metadata.write(key, secret)

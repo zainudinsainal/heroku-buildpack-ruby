@@ -36,9 +36,9 @@ class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
   BLESSED_BUNDLER_VERSIONS = {}
-  BLESSED_BUNDLER_VERSIONS["1"] = "1.15.2"
-  BLESSED_BUNDLER_VERSIONS["2"] = "2.0.2"
-  private_constant :BLESSED_BUNDLER_VERSIONS
+  BLESSED_BUNDLER_VERSIONS["1"] = "1.17.3"
+  BLESSED_BUNDLER_VERSIONS["2"] = "2.2.21"
+  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m
 
   class GemfileParseError < BuildpackError
     def initialize(error)
@@ -152,7 +152,7 @@ class LanguagePack::Helpers::BundlerWrapper
       if output.match(/No ruby version specified/)
         ""
       else
-        output.chomp.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
+        output.strip.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
       end
     end
   end
@@ -161,10 +161,37 @@ class LanguagePack::Helpers::BundlerWrapper
     @lockfile_parser ||= parse_gemfile_lock
   end
 
+  # Some bundler versions have different behavior
+  # if config is global versus local. These versions need
+  # the environment variable BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=1
+  def needs_ruby_global_append_path?
+    Gem::Version.new(@version) < Gem::Version.new("2.1.4")
+  end
+
+  def bundler_version_escape_valve!
+    topic("Removing BUNDLED WITH version in the Gemfile.lock")
+    contents = File.read(@gemfile_lock_path, mode: "rt")
+    File.open(@gemfile_lock_path, "w") do |f|
+      f.write contents.sub(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m, '')
+    end
+  end
+
   private
   def fetch_bundler
     instrument 'fetch_bundler' do
       return true if Dir.exists?(bundler_path)
+
+      topic("Installing bundler #{@version}")
+      bundler_version_escape_valve!
+
+      # Install directory structure (as of Bundler 2.1.4):
+      # - cache
+      # - bin
+      # - gems
+      # - specifications
+      # - build_info
+      # - extensions
+      # - doc
       FileUtils.mkdir_p(bundler_path)
       Dir.chdir(bundler_path) do
         @fetcher.fetch_untar(@bundler_tar)
@@ -182,7 +209,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def major_bundler_version
     # https://rubular.com/r/jt9yj0aY7fU3hD
-    bundler_version_match = @gemfile_lock_path.read.match(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m)
+    bundler_version_match = @gemfile_lock_path.read(mode: "rt").match(BUNDLED_WITH_REGEX)
 
     if bundler_version_match
       bundler_version_match[:major]
@@ -202,4 +229,5 @@ class LanguagePack::Helpers::BundlerWrapper
       raise UnsupportedBundlerVersion.new(BLESSED_BUNDLER_VERSIONS, major)
     end
   end
+
 end

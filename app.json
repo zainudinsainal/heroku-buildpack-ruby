@@ -9,7 +9,7 @@
       "env": {
           "HATCHET_RETRIES":    "3",
           "IS_RUNNING_ON_CI":   "true",
-          "HATCHET_APP_LIMIT":  "80",
+          "HATCHET_APP_LIMIT":  "100",
           "BUILDPACK_LOG_FILE": "tmp/buildpack.log"
       },
       "formation": {
@@ -20,10 +20,9 @@
       },
       "scripts": {
         "test-setup": "bundle exec rake hatchet:setup_ci",
-        "test":       "bundle exec rspec-queue --max-requeues=3 --timeout 180 --queue $REDIS_URL"
+        "test":       "bundle exec rspec-queue --max-requeues=3 --timeout 180 --queue $REDIS_URL --exclude-pattern 'cnb/**/*' || { cat log/test_order.log;  $(exit 1); }"
       },
       "buildpacks": [
-        { "url": "https://github.com/heroku/heroku-buildpack-apt" },
         { "url": "https://github.com/heroku/heroku-buildpack-cli.git" },
         { "url": "heroku/ruby" }
       ]
