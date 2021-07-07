@@ -1,9 +1,13 @@
 name: Check Changelog
 
-on: [pull_request]
-
+on:
+ pull_request:
+  types: [opened, reopened, edited, synchronize]
 jobs:
   build:
+    if: |
+      !contains(github.event.pull_request.labels.*.name, 'dependencies') &&
+      !contains(github.event.pull_request.labels.*.name, 'automation')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1

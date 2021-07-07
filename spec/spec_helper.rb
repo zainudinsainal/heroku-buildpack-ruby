@@ -1,10 +1,13 @@
 require 'rspec/core'
 require 'hatchet'
 require 'fileutils'
+require 'stringio'
 require 'hatchet'
 require 'rspec/retry'
 require 'language_pack'
 require 'language_pack/shell_helpers'
+
+ENV["HATCHET_BUILDPACK_BASE"] = "https://github.com/heroku/heroku-buildpack-ruby"
 
 ENV['RACK_ENV'] = 'test'
 
@@ -19,6 +22,7 @@ RSpec.configure do |config|
   config.default_retry_count = 2 if ENV['IS_RUNNING_ON_CI'] # retry all tests that fail again
 
   config.expect_with :rspec do |c|
+    c.max_formatted_output_length = Float::INFINITY
     c.syntax = :expect
   end
   config.mock_with :nothing
@@ -50,6 +54,10 @@ def fixture_path(path)
   Pathname.new(__FILE__).join("../fixtures").expand_path.join(path)
 end
 
+def rails_lts_config
+  { 'BUNDLE_GEMS__RAILSLTS__COM' => ENV["RAILS_LTS_CREDS"] }
+end
+
 def hatchet_path(path = "")
   Pathname.new(__FILE__).join("../../repos").expand_path.join(path)
 end
@@ -71,4 +79,8 @@ end
 
 def web_boot_status(app)
   wait_for_dyno_boot(app)["state"]
+end
+
+def root_dir
+  Pathname(__dir__).join("..")
 end

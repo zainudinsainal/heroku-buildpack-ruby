@@ -1,7 +1,66 @@
-## Master (unreleased)
+# Main (unreleased)
 
+## v228 (6/24/2021)
+
+* Bundler 2.x is now 2.2.21 (https://github.com/heroku/heroku-buildpack-ruby/pull/1170)
+* Remove support for the Cedar-14 and Heroku-16 stacks (https://github.com/heroku/heroku-buildpack-ruby/pull/1163)
+
+## v227 (4/19/2021)
+
+* Bundler 2.x is now 2.2.16 (https://github.com/heroku/heroku-buildpack-ruby/pull/1150)
+
+## v226 (4/13/2021)
+
+* Bundler 2.x is now 2.2.15 (https://github.com/heroku/heroku-buildpack-ruby/pull/1144)
+
+## v225 (2/25/2021)
+
+* Bundler 2.x is now 2.2.11 (https://github.com/heroku/heroku-buildpack-ruby/pull/1132)
+
+## v224 (2/24/2021)
+
+* Ruby buildpack now relies on the JVM buildpack to install java for Jruby apps (https://github.com/heroku/heroku-buildpack-ruby/pull/1119)
+
+## v223 (1/22/2021)
+
+* Fix Gemfile.lock read bug from preventing propper removal of BUNDLED WITH declaration (https://github.com/heroku/heroku-buildpack-ruby/pull/1108)
+* Fail detection with a CNB-friendly exit code (https://github.com/heroku/heroku-buildpack-ruby/pull/1111)
+
+## v222 (11/02/2020)
+
+* CNB support for Heroku-20 (https://github.com/heroku/heroku-buildpack-ruby/pull/1096)
+
+## v221 (10/22/2020)
+
+* Remove excessive Active Storage warnings (https://github.com/heroku/heroku-buildpack-ruby/pull/1087)
+* Add Heroku-20 to the download presence check (https://github.com/heroku/heroku-buildpack-ruby/pull/1093)
+
+## v220 (8/7/2020)
+
+* BUNDLE_WITHOUT now accommodates values with single spaces (https://github.com/heroku/heroku-buildpack-ruby/pull/1083)
+
+## v219 (8/6/2020)
+
+* Fix double installation of bundler on CI runs when no test script is specified (https://github.com/heroku/heroku-buildpack-ruby/pull/1073)
+* Bundler 2.x is now 2.1.4 (https://github.com/heroku/heroku-buildpack-ruby/pull/1052)
+* Persistent bundler config is now being set using the `BUNDLE_*` env vars (https://github.com/heroku/heroku-buildpack-ruby/pull/1039)
+* Rake task "assets:clean" will not get called if it does not exist (https://github.com/heroku/heroku-buildpack-ruby/pull/1018)
+* CNB: Fix the `gems` layer not being made accessible by subsequent buildpacks (https://github.com/heroku/heroku-buildpack-ruby/pull/1033)
+
+## v218 (7/13/2020)
+
+* The rake binstub generated from compiling Ruby will no longer be placed in the local `bin/rake` location (https://github.com/heroku/heroku-buildpack-ruby/pull/1031)
+* A bug in 2.6.0, 2.6.1, 2.6.3 require a Ruby upgrade, a warning has been added (https://github.com/heroku/heroku-buildpack-ruby/pull/1015)
+* The spring library is now disabled by setting the enviornment variable DISABLE_SPRING=1 (https://github.com/heroku/heroku-buildpack-ruby/pull/1017)
+* Warn when a bad "shebang" line in a binstub is detected (https://github.com/heroku/heroku-buildpack-ruby/pull/1014)
 * Default node version now 12.16.2, yarn is 1.22.4 (https://github.com/heroku/heroku-buildpack-ruby/pull/986)
+
+ ## v217 (7/2/2020)
+
 * Gracefully handle unrecognised stacks ([#982](https://github.com/heroku/heroku-buildpack-ruby/pull/982))
+
+## v216 (rolled back)
+
 
 ## v215 (4/9/2020)
 

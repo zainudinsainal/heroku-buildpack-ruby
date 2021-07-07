@@ -4,6 +4,9 @@ describe "CI" do
   it "Does not cause the double ruby rainbow bug" do
     Hatchet::Runner.new("heroku-ci-json-example").run_ci do |test_run|
       expect(test_run.status).to eq(:succeeded)
+
+      install_bundler_count = test_run.output.scan("Installing bundler").count
+      expect(install_bundler_count).to eq(1), "Expected output to only install bundler once but was found #{install_bundler_count} times. output:\n#{test_run.output}"
     end
   end
 
@@ -16,12 +19,6 @@ describe "CI" do
   it "Works with Rails 5 SQL schema apps" do
     Hatchet::Runner.new("rails5_sql_schema_format").run_ci do |test_run|
       expect(test_run.output).to match("db:structure:load_if_sql completed")
-    end
-  end
-
-  it "Works with Rails 3.1 ruby schema apps" do
-    Hatchet::Runner.new("rails_31_ruby_schema_format").run_ci do |test_run|
-      expect(test_run.output).to match("db:schema:load completed")
     end
   end
 

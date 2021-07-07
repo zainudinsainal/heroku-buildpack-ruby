@@ -12,9 +12,7 @@ group :development, :test do
   gem "rake"
   gem "parallel_tests"
   gem 'rspec-retry'
-  gem "netrc"
-  gem "git", github: "hone/ruby-git", branch: "master"
-  gem 'json', '~> 2.3.0'
+  gem 'json'
   gem 'ci-queue'
   gem 'redis'
 end
